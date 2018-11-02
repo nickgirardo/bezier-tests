@@ -27,6 +27,8 @@ export default class Control {
     this.center = center;
     this.innerRadius = 0.03;
     this.outerRadius = 0.04;
+
+    this.held = false;
   }
 
   draw(canvas, gl) {
