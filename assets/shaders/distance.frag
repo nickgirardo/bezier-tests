@@ -19,11 +19,6 @@ uniform float radius;
 
 out vec4 outColor;
 
-
-vec2 derivative(float t) {
-    return 2.0*(1.0-t)*(c-p1) + 2.0*t*(p2-c);
-}
-
 vec2 compute(float t) {
     return (1.0-t)*(1.0-t)*p1 + 2.0*(1.0-t)*t*c + t*t*p2;
 }
@@ -61,23 +56,8 @@ float project() {
 
 void main() {
     float t = project();
-
-    /*
-    * Attempting to find whether a point is "inside" or "outside" of the curve
-    * Some properties of cross product help is do this
-    * Cross product is normal to the plane of its arguments
-    * All of our vectos live on the xy plane so cross is (0, 0, z)
-    * Cross product is anti communitive
-    * This means that an inside points and outside points differ by sign of z
-    *
-    * Note, our t is capped to [0, 1] so this can behave weirdly where the
-    * nearest point on the curve should lie outside [0,1]
-    *
-    * With a tight bounding box this shouldn't be a problem
-    */
-
-    vec3 crs = cross(vec3(fragPos-compute(t), 0.0), vec3(derivative(t), 0.0));
-    outColor = vec4(sign(crs.z), sign(crs.z), sign(crs.z), 1.0);
+    float dist = distance(fragPos, compute(t));
+    outColor = vec4(dist, dist, dist, 1.0);
 }
 
 

@@ -1,7 +1,7 @@
 import * as Util from "./engine/util.js";
 
 import * as fragSrc from "../assets/shaders/control.frag";
-import * as vertSrc from "../assets/shaders/basic.vert";
+import * as vertSrc from "../assets/shaders/tesselate.vert";
 
 export default class Control {
 
@@ -25,8 +25,8 @@ export default class Control {
 
     this.color = [0.3, 0.3, 0.3];
     this.center = center;
-    this.innerRadius = 0.03;
-    this.outerRadius = 0.04;
+    this.innerRadius = 0.045;
+    this.outerRadius = 0.05;
 
     this.held = false;
   }

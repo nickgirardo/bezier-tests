@@ -8,9 +8,9 @@ const gl = canvas.getContext('webgl2', { antialias: false });
 
 const scene = [];
 
-const p1 = new Control(gl, [-0.5, 0.5]);
-const c = new Control(gl, [0.5, 0.5]);
-const p2 = new Control(gl, [0.5, -0.5]);
+const p1 = new Control(gl, [-0.9, 0.9]);
+const c = new Control(gl, [0.7, 0.7]);
+const p2 = new Control(gl, [0.9, -0.9]);
 const curve = new Curve(gl, p1, c, p2);
 
 function draw() {
@@ -40,8 +40,6 @@ function resize(gl, canvas) {
 
 function mouseDownHandler(e) {
   function grabbed(control, click) {
-    console.log(click, control.center);
-    console.log(Math.sqrt((control.center[0]-click[0])**2 + (control.center[1]-click[1])**2), control.outerRadius);
     return Math.sqrt((control.center[0]-click[0])**2 + (control.center[1]-click[1])**2) < control.outerRadius;
   }
   // Convert from 0..canvas -> -1..1
