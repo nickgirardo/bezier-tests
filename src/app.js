@@ -1,5 +1,6 @@
 import * as Util from "./engine/util.js";
 
+import Curve from "./curve.js";
 import Control from "./control.js";
 
 const canvas = document.querySelector('canvas');
@@ -10,6 +11,7 @@ const scene = [];
 const p1 = new Control(gl, [-0.5, 0.5]);
 const c = new Control(gl, [0.5, 0.5]);
 const p2 = new Control(gl, [0.5, -0.5]);
+const curve = new Curve(gl, p1, c, p2);
 
 function draw() {
   gl.clearColor(0.4, 0.4, 0.8, 1.0); // Clear background with dark grey color
@@ -77,14 +79,17 @@ function mouseMoveHandler(e) {
 
   if(p1.held) {
     p1.center = loc;
+    curve.setP1(p1);
     return;
   }
   if(c.held) {
     c.center = loc;
+    curve.setC(c);
     return;
   }
   if(p2.held) {
     p2.center = loc;
+    curve.setP2(p2);
     return;
   }
 
@@ -100,7 +105,7 @@ function init() {
     return;
   }
 
-  scene.push(p1, c, p2);
+  scene.push(curve, p1, c, p2);
 
   resize(gl, canvas);
   window.addEventListener("resize", e=>resize(gl, canvas));
