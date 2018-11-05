@@ -3,6 +3,10 @@ html, body {
     padding: 0;
 }
 
+body {
+    background-color: lightgrey;
+}
+
 #canvas-container {
     position: absolute;
 
@@ -14,4 +18,8 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+canvas {
+    border: 1px solid black;
 }
