@@ -14,13 +14,9 @@ const p2 = new Control(gl, [0.9, -0.9]);
 const curve = new Curve(gl, p1, c, p2);
 
 function draw() {
-  gl.clearColor(0.4, 0.4, 0.8, 1.0); // Clear background with dark grey color
-  gl.clearDepth(1.0); // Clear the depth buffer
-  gl.enable(gl.DEPTH_TEST); // Enable depth testing, insures correct ordering
-  gl.depthFunc(gl.LEQUAL); // Near obscures far
-
-  // Clear canvas
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  // Clear canvas white
+  gl.clearColor(1.0, 1.0, 1.0, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
 
   // Draw each individual element
   scene.forEach(t=>t.draw(canvas, gl));
@@ -32,8 +28,8 @@ function update() {
 }
 
 function resize(gl, canvas) {
-  canvas.height = Math.min(window.innerHeight, window.innerWidth);
-  canvas.width = Math.min(window.innerHeight, window.innerWidth);
+  canvas.height = Math.min(window.innerHeight, window.innerWidth)*.9;
+  canvas.width = Math.min(window.innerHeight, window.innerWidth)*.9;
 
   gl.viewport(0, 0, canvas.width, canvas.height);
 }
