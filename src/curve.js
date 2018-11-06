@@ -1,27 +1,25 @@
 import * as Util from "./engine/util.js";
 
-import * as fragSrc from "../assets/shaders/curve.frag";
+// Fragment shaders
+import * as solid from "../assets/shaders/solid-curve.frag";
+import * as nearest from "../assets/shaders/nearest-t.frag";
+import * as distance from "../assets/shaders/distance.frag";
+import * as signedDistance from "../assets/shaders/signed-distance.frag";
+import * as colorFill from "../assets/shaders/color-fill.frag";
+
 import * as vertSrc from "../assets/shaders/basic.vert";
+
+const shaders = {
+  solid,
+  nearest,
+  distance,
+  signedDistance,
+  colorFill,
+}
 
 export default class Control {
 
   constructor(gl, p1, c, p2) {
-    // Create program and link shaders
-    this.programInfo = Util.createProgram(gl, {vertex: vertSrc, fragment: fragSrc}, {
-      uniform: {
-        lut: 'lut',
-        innerColor: 'innerColor',
-        outerColor: 'outerColor',
-        p1: 'p1',
-        c: 'c',
-        p2: 'p2',
-        radius: 'radius',
-      },
-      attribute: {
-        position: 'position'
-      },
-    });
-
     this.vertexBuffer = gl.createBuffer();
 
     this.innerColor = [0.4, 0.4, 0.7];
@@ -37,11 +35,37 @@ export default class Control {
 
   }
 
+  buildProgram(gl, shader) {
+    this.programInfo = Util.createProgram(gl, {vertex: vertSrc, fragment: shaders[shader]}, {
+      uniform: {
+        lut: 'lut',
+        innerColor: 'innerColor',
+        outerColor: 'outerColor',
+        p1: 'p1',
+        c: 'c',
+        p2: 'p2',
+        radius: 'radius',
+      },
+      attribute: {
+        position: 'position'
+      },
+    });
+  }
+
   updateVertexBuffer(gl, verts) {
     this.verts = verts;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.verts), gl.STATIC_DRAW);
     gl.vertexAttribPointer(this.programInfo.locations.attribute.position, 2, gl.FLOAT, false, 0, 0);
+  }
+
+  updateCurrentFragmentShader(gl, shader) {
+    if(!shaders[shader]) {
+      console.error(`Shader not found: ${shader}`);
+      return;
+    }
+
+    this.buildProgram(gl, shader);
   }
 
   buildLUT() {

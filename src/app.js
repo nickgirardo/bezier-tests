@@ -102,6 +102,25 @@ window.changeVerts = function () {
   }
 }
 
+// Listener for the shader select control
+window.changeShader = function () {
+  const shader = document.getElementById("shader-select").value;
+
+  const shaderNames = [
+    "solid",
+    "nearest",
+    "distance",
+    "signedDistance",
+    "colorFill",
+  ];
+
+  if(shaderNames.includes(shader))
+      curve.updateCurrentFragmentShader(gl, shader);
+  else
+      console.warn(`Unknown shader: ${shader}`);
+}
+
+
 function resize(gl, canvas) {
   canvas.height = Math.min(window.innerHeight, window.innerWidth)*.9;
   canvas.width = Math.min(window.innerHeight, window.innerWidth)*.9;
@@ -119,6 +138,7 @@ function init() {
   }
 
   scene.push(curve, p1, c, p2);
+  window.changeShader();
   window.changeVerts();
 
   resize(gl, canvas);
