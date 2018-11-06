@@ -8,7 +8,8 @@ const int steps = 64;
 const int fineSteps = 8;
 
 uniform vec2 lut[steps];
-uniform vec3 color;
+uniform vec3 innerColor;
+uniform vec3 outerColor;
 
 // Control points
 uniform vec2 p1;
@@ -77,7 +78,7 @@ void main() {
     */
 
     vec3 crs = cross(vec3(fragPos-compute(t), 0.0), vec3(derivative(t), 0.0));
-    outColor = vec4(sign(crs.z), sign(crs.z), sign(crs.z), 1.0);
+    outColor = vec4(mix(innerColor, outerColor, step(0.0, crs.z)), 1.0);
 }
 
 
