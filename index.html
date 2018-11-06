@@ -6,20 +6,22 @@
 
     <div id="canvas-container">
       <canvas></canvas>
-      <div>
-        <select id="vert-select" onchange="changeVerts()">
-          <option value="bounding">Bounding Triangle</option>
-          <option value="fullscreen" selected>Fullscreen</option>
-        </select>
-      </div>
-      <div>
-        <select id="shader-select" onchange="changeShader()">
-          <option value="solid" selected>Solid Curve</option>
-          <option value="nearest">Nearest "t"</option>
-          <option value="distance">Distance</option>
-          <option value="signedDistance">Signed distance</option>
-          <option value="colorFill">Color fill</option>
-        </select>
+      <div id="controls-container">
+        <div>
+          <select id="vert-select" onchange="changeVerts()">
+            <option value="fullscreen" selected>Full Canvas</option>
+            <option value="bounding">Bounding Triangle</option>
+          </select>
+        </div>
+        <div>
+          <select id="shader-select" onchange="changeShader()">
+            <option value="solid" selected>Solid Curve</option>
+            <option value="nearest">Nearest "t"</option>
+            <option value="distance">Distance</option>
+            <option value="signedDistance">Signed distance</option>
+            <option value="colorFill">Color fill</option>
+          </select>
+        </div>
       </div>
     </div>
 
