@@ -22,17 +22,7 @@ export default class Control {
       },
     });
 
-    // Create a vertex array, not actually putting any verts inside
-    // Just tesselating the unit square with gl vertex id
     this.vertexBuffer = gl.createBuffer();
-    this.updateVertexBuffer = () => {
-      this.verts = [...p1.center, ...c.center, ...p2.center];
-      //this.verts = [-1, -1, -1, 1, 1, -1, -1, 1, 1, -1, 1, 1];
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.verts), gl.STATIC_DRAW);
-      gl.vertexAttribPointer(this.programInfo.locations.attribute.position, 2, gl.FLOAT, false, 0, 0);
-    }
-    this.updateVertexBuffer();
 
     this.innerColor = [0.4, 0.4, 0.7];
     this.outerColor = [0.2, 0.6, 0.7];
@@ -47,6 +37,12 @@ export default class Control {
 
   }
 
+  updateVertexBuffer(gl, verts) {
+    this.verts = verts;
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.verts), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(this.programInfo.locations.attribute.position, 2, gl.FLOAT, false, 0, 0);
+  }
 
   buildLUT() {
     const lut = [];
@@ -66,19 +62,16 @@ export default class Control {
   setP1(p) {
     this.p1 = p.center;
     this.buildLUT();
-    this.updateVertexBuffer();
   }
 
   setC(p) {
     this.c = p.center;
     this.buildLUT();
-    this.updateVertexBuffer();
   }
 
   setP2(p) {
     this.p2 = p.center;
     this.buildLUT();
-    this.updateVertexBuffer();
   }
 
   draw(canvas, gl) {

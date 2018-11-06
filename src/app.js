@@ -11,7 +11,7 @@ const scene = [];
 const p1 = new Control(gl, [-0.9, 0.9]);
 const c = new Control(gl, [0.7, 0.7]);
 const p2 = new Control(gl, [0.9, -0.9]);
-const curve = new Curve(gl, p1, c, p2);
+const curve = new Curve(gl, p1, c, p2, [...p1.center, ...c.center, ...p2.center]);
 
 function draw() {
   // Clear canvas white
@@ -25,13 +25,6 @@ function draw() {
 function update() {
   draw();
   window.requestAnimationFrame(update);
-}
-
-function resize(gl, canvas) {
-  canvas.height = Math.min(window.innerHeight, window.innerWidth)*.9;
-  canvas.width = Math.min(window.innerHeight, window.innerWidth)*.9;
-
-  gl.viewport(0, 0, canvas.width, canvas.height);
 }
 
 function mouseDownHandler(e) {
@@ -56,6 +49,7 @@ function mouseDownHandler(e) {
     p2.held = true;
     return;
   }
+
 }
 
 function mouseUpHandler(e) {
@@ -74,20 +68,45 @@ function mouseMoveHandler(e) {
   if(p1.held) {
     p1.center = loc;
     curve.setP1(p1);
+    window.changeVerts();
     return;
   }
   if(c.held) {
     c.center = loc;
     curve.setC(c);
+    window.changeVerts();
     return;
   }
   if(p2.held) {
     p2.center = loc;
     curve.setP2(p2);
+    window.changeVerts();
     return;
   }
+}
 
+// Listener for the vertex type select control
+window.changeVerts = function () {
+  const vertMode = document.getElementById("vert-select").value;
 
+  switch(vertMode) {
+    case "bounding":
+      curve.updateVertexBuffer(gl, [...p1.center, ...c.center, ...p2.center]);
+      break;
+    case "fullscreen":
+      curve.updateVertexBuffer(gl, [-1, -1, -1, 1, 1, -1, -1, 1, 1, -1, 1, 1]);
+      break;
+    default:
+      console.warn(`Unknown vert mode: ${vertMode}`);
+      break;
+  }
+}
+
+function resize(gl, canvas) {
+  canvas.height = Math.min(window.innerHeight, window.innerWidth)*.9;
+  canvas.width = Math.min(window.innerHeight, window.innerWidth)*.9;
+
+  gl.viewport(0, 0, canvas.width, canvas.height);
 }
 
 function init() {
@@ -100,6 +119,7 @@ function init() {
   }
 
   scene.push(curve, p1, c, p2);
+  window.changeVerts();
 
   resize(gl, canvas);
   window.addEventListener("resize", e=>resize(gl, canvas));
