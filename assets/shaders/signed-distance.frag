@@ -7,7 +7,9 @@ in vec2 fragPos;
 const int steps = 64;
 const int fineSteps = 8;
 
+// Look up table, contains some points of curve
 uniform vec2 lut[steps];
+
 uniform vec3 innerColor;
 uniform vec3 outerColor;
 
@@ -16,25 +18,27 @@ uniform vec2 p1;
 uniform vec2 c;
 uniform vec2 p2;
 
-uniform float radius;
+out vec4 color;
 
-out vec4 outColor;
-
-
+// Find the derivative or tangent vector of the curve at the value t
 vec2 derivative(float t) {
     return 2.0*(1.0-t)*(c-p1) + 2.0*t*(p2-c);
 }
 
+// Find the point on the curve associated with a given value t
 vec2 compute(float t) {
     return (1.0-t)*(1.0-t)*p1 + 2.0*(1.0-t)*t*c + t*t*p2;
 }
 
+// Find the t of the nearest point on the curve to the current fragment
+// Within the range 0..1
 float project() {
     // No need to worry about distances farther than this
     float minDist = 999999.0;
     float t;
     int nearest;
 
+    // Coarse check, iterate through lookup table
     for(int i=0; i<steps; i++) {
         float dist = distance(fragPos, lut[i]);
         if(dist < minDist) {
@@ -44,9 +48,11 @@ float project() {
         }
     }
 
+    // Fine check, linear search near the closest point from the lookup table
     float base = (float(nearest)-0.5)/float(steps-1);
     float diff = 1.0/(float(fineSteps-1)*float(steps-1));
     for(int i=0; i<fineSteps; i++) {
+        // Only check values within the curves range of 0..1
         float lookup = clamp(base + diff*float(i), 0.0, 1.0);
         vec2 value = compute(lookup);
         float dist = distance(value, fragPos);
@@ -60,6 +66,15 @@ float project() {
     return t;
 }
 
+// Render the signed distance between the curve and the current fragment
+// Project returns the closest value t to the current fragment 
+// Compute finds where this point lies
+// Calculate the cross product of the difference between value that value and the current fragment
+//   with the derivative of the curve of the found value t
+// The z-component of this value is rendered with the inner color for negative values
+// Otherwise rendered with the outer color
+//
+// Note that this distance is NOT the euclidean distance 
 void main() {
     float t = project();
 
@@ -80,9 +95,9 @@ void main() {
     vec3 crs = cross(vec3(fragPos-compute(t), 0.0), vec3(derivative(t), 0.0));
     float dist = crs.z;
     if(dist < 0.0) {
-        outColor = vec4(innerColor*dist*-1.0, 1.0);
+        color = vec4(innerColor*dist*-1.0, 1.0);
     } else {
-        outColor = vec4(outerColor*dist, 1.0);
+        color = vec4(outerColor*dist, 1.0);
     }
 }
 
